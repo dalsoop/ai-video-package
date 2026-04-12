@@ -86,9 +86,10 @@ fn init(name: &str, genre: Option<String>, project_type: Option<String>, phase: 
     fs::create_dir_all(avp_dir()).unwrap();
     fs::write(current_file(), name).unwrap();
 
-    // git 초기화
+    // git 초기화 + GitHub 레포 생성 + push
     crate::git::init_repo();
     crate::git::auto_commit(&format!("project: {} 생성", name));
+    crate::git::setup_remote(name);
 
     println!("✅ 프로젝트 생성: {}", name);
     println!("   경로: {}", dir.display());
