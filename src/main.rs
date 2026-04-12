@@ -158,6 +158,14 @@ enum CutCmd {
         #[arg(long)]
         last_frame: Option<String>,
     },
+    /// 파이프라인 단계 전진
+    Advance {
+        /// 컷 번호
+        number: u32,
+        /// 목표 단계 (keycut_done/seedance_done/frame_extracted/complete)
+        #[arg(long)]
+        to: Option<String>,
+    },
     /// 영상에서 프레임 추출 (ffmpeg)
     Frame {
         /// 영상 파일 경로
