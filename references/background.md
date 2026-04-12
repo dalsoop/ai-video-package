@@ -61,3 +61,11 @@ Midjourney Prompt (영문):
 - **Phase 2**: 약간의 긴장감, 선명한 색감, 활기찬 환경
 - **Phase 3**: 어둡고 무게감 있는 조명, 채도 낮춤, 극장판 분위기
 - **Phase 4**: 극단적 파괴, 붉은/보라 톤, 초현실적 스케일, 종말적 분위기
+
+## 주의사항
+
+- **환경 디테일은 괄호 묶기로 나열.** 문장형 서술 금지. 미드저니는 짧은 키워드가 잘 먹힌다.
+  - ✅ `ruined city environment (collapsed highway, cracked asphalt, rusted vehicles, half-destroyed buildings)`
+  - ❌ `A collapsed highway overpass that is broken in the middle and sagging down with half-destroyed high-rise buildings on both sides`
+- **금지 키워드는 최소한으로.** `no characters, no text` 정도면 충분. 과잉 나열은 노이즈.
+- **프롬프트가 길어질수록 미드저니가 혼란스러워한다.** 핵심만 넣고 나머지는 빼라.
