@@ -3,6 +3,7 @@ mod cut;
 mod git;
 mod project;
 mod prompt;
+mod skill;
 
 use clap::{Parser, Subcommand};
 
@@ -41,8 +42,34 @@ enum Commands {
         #[command(subcommand)]
         cmd: PromptCmd,
     },
+    /// 스킬 파일 관리 (SKILL.md, references/)
+    Skill {
+        #[command(subcommand)]
+        cmd: SkillCmd,
+    },
     /// 전체 상태 확인
     Status,
+}
+
+// === SKILL ===
+#[derive(Subcommand)]
+enum SkillCmd {
+    /// 스킬 파일 목록 + 변경 상태
+    Status,
+    /// 스킬 파일 변경사항 커밋 + push
+    Push {
+        /// 커밋 메시지
+        #[arg(long, short)]
+        message: Option<String>,
+    },
+    /// 스킬 파일 diff 보기
+    Diff,
+    /// git log 보기
+    Log {
+        /// 표시할 커밋 수
+        #[arg(default_value = "10")]
+        count: usize,
+    },
 }
 
 // === PROJECT ===
@@ -224,6 +251,7 @@ fn main() {
         Commands::Asset { cmd } => asset::run(cmd),
         Commands::Cut { cmd } => cut::run(cmd),
         Commands::Prompt { cmd } => prompt::run(cmd),
+        Commands::Skill { cmd } => skill::run(cmd),
         Commands::Status => status(),
     }
 }
