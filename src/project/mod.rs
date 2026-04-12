@@ -86,6 +86,10 @@ fn init(name: &str, genre: Option<String>, project_type: Option<String>, phase: 
     fs::create_dir_all(avp_dir()).unwrap();
     fs::write(current_file(), name).unwrap();
 
+    // git 초기화
+    crate::git::init_repo();
+    crate::git::auto_commit(&format!("project: {} 생성", name));
+
     println!("✅ 프로젝트 생성: {}", name);
     println!("   경로: {}", dir.display());
     println!("   장르: {}", meta.genre);
@@ -219,6 +223,9 @@ fn show_status(name: &str) {
     if let Some(at) = meta.last_keycut_at {
         println!("  마지막 키컷: 컷 #{}", at);
     }
+    println!();
+
+    crate::git::log_summary(5);
 }
 
 fn current_project_meta() -> (PathBuf, ProjectMeta) {
@@ -245,6 +252,7 @@ fn set_phase(level: u8) {
     if level > old {
         println!("   💡 Phase 전환 시 미드저니 키컷 재생성을 권고합니다.");
     }
+    crate::git::auto_commit(&format!("phase: {} → {}", old, level));
 }
 
 fn set_style(keywords: Option<String>) {
@@ -254,6 +262,7 @@ fn set_style(keywords: Option<String>) {
             meta.style_prefix = kw.clone();
             fs::write(&path, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
             println!("✅ 고정 스타일 접두사 설정: {}", kw);
+            crate::git::auto_commit(&format!("style: 접두사 설정"));
         }
         None => {
             if meta.style_prefix.is_empty() {

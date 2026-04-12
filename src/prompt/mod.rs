@@ -69,6 +69,8 @@ fn save(target: &str, prompt_type: &str, text: &str) {
     let status = if within_limit { "✅" } else { "⚠️ 초과!" };
     println!("{} 프롬프트 저장: {} ({})", status, target, prompt_type);
     println!("   글자수: {}/{}", char_count, limit);
+
+    crate::git::auto_commit(&format!("prompt: {} {} 저장", target, prompt_type));
 }
 
 fn show(target: &str) {

@@ -124,6 +124,8 @@ fn add(title: &str, phase: Option<u8>, desc: Option<String>) {
 
     println!("✅ 컷 #{} 추가: {}", number, title);
     println!("   Phase: {}", meta.phase);
+
+    crate::git::auto_commit(&format!("cut: #{} {} 추가", number, title));
 }
 
 fn list() {
@@ -221,7 +223,7 @@ fn advance(number: u32, to: Option<String>) {
     let mut meta: CutMeta = serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
 
     let target = match to {
-        Some(s) => stage_from_str(&s),
+        Some(ref s) => stage_from_str(s),
         None => {
             // 다음 단계로 자동 전진
             match meta.stage {
@@ -237,6 +239,23 @@ fn advance(number: u32, to: Option<String>) {
         }
     };
 
+    // 하드 강제: 순서 건너뛰기 금지
+    if target.index() != meta.stage.index() + 1 && to.is_none() {
+        // 자동 전진은 항상 +1이므로 OK
+    }
+    if target.index() <= meta.stage.index() {
+        eprintln!("❌ 컷 #{}: 이미 [{}] {} 단계입니다. 뒤로 갈 수 없습니다.", number, meta.stage.index(), meta.stage.label());
+        std::process::exit(1);
+    }
+    if target.index() > meta.stage.index() + 1 {
+        eprintln!("❌ 컷 #{}: [{}] {} → [{}] {} 건너뛰기 금지. 순서대로 진행하세요.",
+            number, meta.stage.index(), meta.stage.label(), target.index(), target.label());
+        eprintln!("   현재 단계: [{}] {}", meta.stage.index(), meta.stage.label());
+        eprintln!("   다음 단계: [{}] {}", meta.stage.index() + 1,
+            ALL_STAGES.iter().find(|s| s.index() == meta.stage.index() + 1).map(|s| s.label()).unwrap_or("?"));
+        std::process::exit(1);
+    }
+
     let old_label = meta.stage.label().to_string();
     meta.stage = target;
     if meta.stage == CutStage::Complete {
@@ -244,6 +263,8 @@ fn advance(number: u32, to: Option<String>) {
     }
     fs::write(&path, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
     println!("✅ 컷 #{} 파이프라인: {} → {}", number, old_label, meta.stage.label());
+
+    crate::git::auto_commit(&format!("pipeline: 컷 #{} → {}", number, meta.stage.label()));
 }
 
 fn done(number: u32, video: Option<String>, last_frame: Option<String>) {
@@ -286,6 +307,7 @@ fn done(number: u32, video: Option<String>, last_frame: Option<String>) {
 
     // 연속 프레임 카운트 증가
     crate::project::increment_consecutive_frames();
+    crate::git::auto_commit(&format!("cut: #{} 완성", number));
 }
 
 fn frame(video_path: &str, cut_number: u32, pos: &str) {
@@ -357,6 +379,7 @@ fn frame(video_path: &str, cut_number: u32, pos: &str) {
             if pos == "last" {
                 println!("   → 다음 컷의 Seedance 첫 프레임으로 사용 가능");
             }
+            crate::git::auto_commit(&format!("frame: 컷 #{} {} 프레임 추출", cut_number, pos));
         }
         _ => {
             eprintln!("ffmpeg 실행 실패. ffmpeg이 설치되어 있는지 확인하세요.");

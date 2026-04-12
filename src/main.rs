@@ -1,5 +1,6 @@
 mod asset;
 mod cut;
+mod git;
 mod project;
 mod prompt;
 

@@ -96,6 +96,8 @@ fn add(asset_type: &str, name: &str, image: Option<String>, prompt: Option<Strin
         crate::project::reset_consecutive_frames(0);
         println!("   🔄 연속 프레임 카운트 리셋됨");
     }
+
+    crate::git::auto_commit(&format!("asset: [{}] {} 추가", asset_type, name));
 }
 
 fn list(type_filter: Option<&str>) {
@@ -180,6 +182,7 @@ fn remove(name: &str) {
             }
             fs::remove_file(&json_path).unwrap();
             println!("🗑 에셋 삭제: {}", name);
+            crate::git::auto_commit(&format!("asset: {} 삭제", name));
             return;
         }
     }
