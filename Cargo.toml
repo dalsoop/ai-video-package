@@ -1,0 +1,15 @@
+[package]
+name = "ai-video-package"
+version = "0.1.0"
+edition = "2024"
+description = "액션 애니메이션 제작 파이프라인 CLI"
+
+[[bin]]
+name = "avp"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde"] }
