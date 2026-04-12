@@ -71,5 +71,6 @@ Midjourney Prompt (영문):
 ## 주의사항
 
 - 적 디자인은 단독 이미지로. 주인공과 함께 넣지 않는다 (합성 편의).
-- 배경은 단순하게 — `dark background` 또는 `dark atmospheric background`.
+- **배경은 반드시 흰색** — `white background, clean white backdrop`. 다른 배경 넣지 않는다.
+- **글자/폰트/설명 텍스트 금지** — `no text, no labels, no watermark, no annotations` 반드시 포함.
 - 보스급은 전신이 보이는 풀샷 + 부위 클로즈업을 별도로 만들면 좋다.

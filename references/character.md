@@ -64,6 +64,8 @@ white scarf, vintage flight goggles on forehead, brown leather gloves
 
 ## 주의사항
 
+- **배경은 반드시 흰색** — `white background, clean white backdrop`. 캐릭터에만 집중.
+- **글자/폰트/설명 텍스트 금지** — `no text, no labels, no watermark, no annotations` 반드시 포함.
 - 미드저니는 텍스트(이름, 글자)를 잘 못 넣는다. 이름표 같은 건 프롬프트에 넣지 않는다.
 - 캐릭터 시트에서 너무 많은 포즈(6개 이상)를 요구하면 퀄리티가 떨어진다. 3~4개가 적정.
 - 무기를 들고 있는 모습이 필요하면, 무기 디자인을 먼저 확정하고 캐릭터에 반영하는 게 일관성에 좋다.
