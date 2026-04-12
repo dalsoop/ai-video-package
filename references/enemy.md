@@ -71,6 +71,7 @@ Midjourney Prompt (영문):
 ## 주의사항
 
 - 적 디자인은 단독 이미지로. 주인공과 함께 넣지 않는다 (합성 편의).
-- **배경은 반드시 흰색** — `white background, clean white backdrop`. 다른 배경 넣지 않는다.
-- **글자/폰트/설명 텍스트 금지** — `no text, no labels, no watermark, no annotations` 반드시 포함.
+- **배경은 흰색/빈 배경** — `blank background` 또는 `white background`. 짧게.
+- **텍스트 금지** — `no text` 하나면 충분. 과잉 금지 키워드(`no labels, no watermark, no annotations` 등)는 오히려 노이즈.
+- **복장/장비/외형은 괄호 묶기로 나열.** 문장형 서술 금지. 미드저니는 짧은 키워드가 잘 먹힌다.
 - 보스급은 전신이 보이는 풀샷 + 부위 클로즈업을 별도로 만들면 좋다.

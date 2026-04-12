@@ -50,24 +50,43 @@ white scarf, vintage flight goggles on forehead, brown leather gloves
 ## 프롬프트 유형
 
 **캐릭터 시트 (터너라운드 시트) — 기본**
-- 정면/측면/후면 3뷰 터너라운드가 기본. 미드저니가 가장 잘 잡는 형식.
-- 반드시 아래 구조 키워드를 프롬프트 맨 앞에 넣는다:
+- 정면/측면/후면 또는 정면/3/4뷰 터너라운드. 미드저니가 가장 잘 잡는 형식.
+- 프롬프트 맨 앞에 **시트 타입을 짧게 선언**한다. 길게 쓰면 오히려 안 먹힌다:
 
 ```
-TV anime character design sheet, model sheet, full body turnaround 
-in a clean grid layout: front view, side view, back view of the same character, 
-consistent proportions, orthographic feel, neutral standing pose.
+anime character sheet, front view and side view and back view
 ```
 
-- 스타일 키워드도 아래를 기본으로 넣는다:
-
+또는 화풍에 따라:
 ```
-Clean crisp lineart, cel shading, flat colors, minimal shadows, 
-pure white background, high readability, no text, no labels, no watermark, no annotations
+flat vector character sheet, front view and 3/4 view
 ```
 
-- 구조 키워드 → 고정 스타일 접두사 → 캐릭터 외형 → 복장/장비 → 스타일 키워드 → 파라미터 순서로 작성.
-- 서술형으로 쓰지 않는다. 키워드 나열식이 미드저니에서 훨씬 잘 먹힌다.
+- **복장/장비는 괄호 묶기로 나열**한다. 문장형 서술 금지:
+
+```
+❌ Wearing a tattered olive-green travel cloak with frayed edges, brown leather buckle strap across shoulder
+✅ post-apocalyptic survivor outfit (tattered olive-green cloak, frayed edges, brown leather buckle strap, dark inner clothing, worn brown boots)
+```
+
+- **스타일 키워드는 구체적으로, 금지 키워드는 최소한으로:**
+
+```
+clean line art with uniform stroke, cel shading, solid color fills, minimal shading, blank background, no text
+```
+
+- `no text` 하나면 충분. `no labels, no watermark, no annotations` 다 넣으면 오히려 노이즈.
+
+- **프롬프트 구성 순서:**
+  1. 시트 타입 선언 (짧게)
+  2. 캐릭터 기본 정보 (나이, 성별, 외형 키워드)
+  3. 복장/장비 (괄호 묶기)
+  4. 표정/포즈 지정
+  5. 스타일 키워드
+  6. 배경/금지 키워드 (최소한)
+  7. 파라미터 (--ar, --v 7)
+
+- **핵심 원칙: 미드저니 프롬프트는 짧고 키워드 중심일수록 잘 먹힌다.** 설명문을 쓰지 않는다.
 
 **단일 포즈 레퍼런스**
 - 특정 상황에서의 캐릭터 모습 (전투 자세, 일상, 감정 표현 등)
@@ -79,8 +98,9 @@ pure white background, high readability, no text, no labels, no watermark, no an
 
 ## 주의사항
 
-- **배경은 반드시 흰색** — `white background, clean white backdrop`. 캐릭터에만 집중.
-- **글자/폰트/설명 텍스트 금지** — `no text, no labels, no watermark, no annotations` 반드시 포함.
+- **배경은 흰색/빈 배경** — `blank background` 또는 `white background`. 짧게.
+- **텍스트 금지** — `no text` 하나면 충분. 과잉 금지 키워드는 노이즈.
 - 미드저니는 텍스트(이름, 글자)를 잘 못 넣는다. 이름표 같은 건 프롬프트에 넣지 않는다.
-- 캐릭터 시트에서 너무 많은 포즈(6개 이상)를 요구하면 퀄리티가 떨어진다. 3~4개가 적정.
+- 캐릭터 시트에서 너무 많은 포즈(6개 이상)를 요구하면 퀄리티가 떨어진다. 2~3개가 적정.
 - 무기를 들고 있는 모습이 필요하면, 무기 디자인을 먼저 확정하고 캐릭터에 반영하는 게 일관성에 좋다.
+- **프롬프트가 길어질수록 미드저니가 혼란스러워한다.** 핵심만 넣고 나머지는 빼라.
