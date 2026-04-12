@@ -103,15 +103,86 @@ Action Prompt (영문):
 - "전체 정리해줘" 요청 시 모든 컷 흐름 + 남은 계획을 한눈에.
 - 전체 흐름을 놓치지 않고 기억한다. 사용자가 물어보면 언제든 정리해준다.
 
-## 프롬프트 작성 팁
+## Seedance 프롬프트 공식 (필수)
 
-- 시간순으로 서술한다. "first... then... without pause... immediately..."
-- 카메라 무빙을 동작 사이사이에 명시한다. "camera orbits... camera rushes forward... camera tracks..."
-- 환경 디테일을 앞에 깔고, 캐릭터 외형을 한 번 묘사한 뒤, 동작 연쇄를 이어간다.
-- 마지막에 스타일 키워드를 모아서 넣는다. "Hyper-detailed theatrical anime, extreme motion blur..."
-- 끝에 반드시 "No dialogue, No BGM."
-- 사용자가 퀄리티를 더 요청하면 디테일을 늘리되, **절대 3,000자를 넘기지 않는다.**
-- 3,000자를 넘기면 Seedance에 입력이 안 된다. 매번 글자수를 세서 확인한다.
+### 구조
+```
+Subject + Action + Scene/Environment + Lighting + Camera Movement + Style + Quality Suffix + Constraints
+```
+
+### 핵심 규칙
+
+**1. 1샷 = 1동사 원칙**
+- 하나의 프롬프트에 핵심 동작 1개. 보조 동작 최대 1개.
+- ❌ 5개 액션을 시간순으로 나열 → 지터링, 퀄리티 저하
+- ✅ 1개 핵심 동작에 집중 → 선명한 결과
+
+**2. 카메라 무빙 1개만**
+- 여러 카메라 무빙을 넣으면 흔들리고 깨진다.
+- ❌ `camera tracks then orbits then rushes forward`
+- ✅ `camera smoothly tracks from the side`
+
+**3. 프롬프트 길이: 30~200단어**
+- 너무 짧으면 디테일 부족, 너무 길면 요소끼리 충돌.
+- 3,000자 이내 제한은 유지. 매번 글자수 체크.
+
+**4. 조명 묘사 필수**
+- 조명이 퀄리티에 가장 큰 영향을 미친다. 반드시 넣는다.
+- `golden hour rim lighting`, `dramatic backlighting`, `warm firelight with cool blue contrast` 등
+
+**5. 속도 표현 주의**
+- `"fast"`는 퀄리티 저하 1등 키워드. 가급적 사용하지 않는다.
+- 부드러운 동작어 우선: `Slow, Gentle, Continuous, Natural, Smooth`
+- 빠른 페이스가 필요하면 동작 1개만 빠르게, 나머지는 안정적으로.
+
+**6. 네거티브 프롬프트 미지원**
+- Seedance 2.0은 `avoid`, `don't`, `no jitter` 같은 네거티브를 지원하지 않는다.
+- 반드시 **긍정형**으로 표현한다:
+  - ❌ `avoid jitter, avoid bent limbs`
+  - ✅ `Stable picture, Smooth movements, Normal human structure, Natural pose`
+
+**7. 필수 퀄리티 접미사**
+모든 Seedance 프롬프트 끝에 아래를 반드시 붙인다:
+```
+4K, Ultra HD, Rich details, Sharp clarity, Cinematic texture, Stable picture. No dialogue, No BGM.
+```
+
+**8. 캐릭터 일관성 문구 필수**
+캐릭터가 등장하는 프롬프트에는 반드시 포함:
+```
+Maintain face and clothing consistency, natural smooth movements.
+```
+
+**9. 스타일 레퍼런스 앵커**
+실제 작품/감독 이름이 강력한 스타일 앵커가 된다:
+- `"Makoto Shinkai lighting"` — 애니메이션 조명
+- `"Demon Slayer action choreography"` — 액션 안무
+- `"Studio Ghibli color palette"` — 색감
+- `"Blade Runner 2049 mood"` — SF 분위기
+
+**10. 카메라 무빙 키워드 (택 1)**
+
+| 무빙 | 효과 | 언제 |
+|------|------|------|
+| `dolly-in / push` | 텐션 빌드업, 친밀감 | 클로즈업, 감정 |
+| `dolly-out / pull` | 환경 공개, 스케일감 | 와이드 전환 |
+| `tracking` | 캐릭터 따라감 | 이동/추격 |
+| `orbit` | 주변 회전 | 피니시, 하이라이트 |
+| `crane up/down` | 수직 이동 | 도약, 낙하 |
+| `gimbal` | 안정적 부드러운 느낌 | 범용 |
+| `handheld` | 다큐/긴박감 | 전투 혼란 |
+| `fixed` | 정적, 분위기 | 대치, 긴장 |
+
+### 프롬프트 구성 순서
+1. `@Image1 as first frame.` (Start Frame이 있을 때)
+2. **Subject** — 캐릭터 외형 + 고정 키워드
+3. **Action** — 핵심 동작 1개 (시간순, 평서문)
+4. **Scene** — 환경, 장소
+5. **Lighting** — 구체적 조명 묘사
+6. **Camera** — 무빙 1개만
+7. **Style** — 스타일 앵커 + 질감 키워드
+8. **Quality Suffix** — 퀄리티 접미사
+9. **Constraints** — 캐릭터 일관성 + `No dialogue, No BGM.`
 
 ## Seedance 설정 참고
 
