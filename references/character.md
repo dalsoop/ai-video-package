@@ -49,10 +49,25 @@ white scarf, vintage flight goggles on forehead, brown leather gloves
 
 ## 프롬프트 유형
 
-**캐릭터 시트 (다중 포즈)**
-- 정면/측면/후면 또는 다양한 표정/포즈를 한 장에
-- `character design sheet, multiple poses, white background` 키워드 사용
-- 배경은 단색(흰색/회색)으로 — 캐릭터에만 집중
+**캐릭터 시트 (터너라운드 시트) — 기본**
+- 정면/측면/후면 3뷰 터너라운드가 기본. 미드저니가 가장 잘 잡는 형식.
+- 반드시 아래 구조 키워드를 프롬프트 맨 앞에 넣는다:
+
+```
+TV anime character design sheet, model sheet, full body turnaround 
+in a clean grid layout: front view, side view, back view of the same character, 
+consistent proportions, orthographic feel, neutral standing pose.
+```
+
+- 스타일 키워드도 아래를 기본으로 넣는다:
+
+```
+Clean crisp lineart, cel shading, flat colors, minimal shadows, 
+pure white background, high readability, no text, no labels, no watermark, no annotations
+```
+
+- 구조 키워드 → 고정 스타일 접두사 → 캐릭터 외형 → 복장/장비 → 스타일 키워드 → 파라미터 순서로 작성.
+- 서술형으로 쓰지 않는다. 키워드 나열식이 미드저니에서 훨씬 잘 먹힌다.
 
 **단일 포즈 레퍼런스**
 - 특정 상황에서의 캐릭터 모습 (전투 자세, 일상, 감정 표현 등)
