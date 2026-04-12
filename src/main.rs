@@ -126,6 +126,9 @@ enum AssetCmd {
         /// 이미지 파일 경로
         #[arg(long)]
         image: Option<String>,
+        /// 이미지 URL (다운로드해서 저장)
+        #[arg(long)]
+        url: Option<String>,
         /// 미드저니 프롬프트
         #[arg(long)]
         prompt: Option<String>,

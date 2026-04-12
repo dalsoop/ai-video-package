@@ -41,8 +41,8 @@ fn type_to_dir(asset_type: &str) -> &str {
 
 pub fn run(cmd: AssetCmd) {
     match cmd {
-        AssetCmd::Add { r#type, name, image, prompt, keywords, threat } => {
-            add(&r#type, &name, image, prompt, keywords, threat);
+        AssetCmd::Add { r#type, name, image, url, prompt, keywords, threat } => {
+            add(&r#type, &name, image, url, prompt, keywords, threat);
         }
         AssetCmd::List { r#type } => list(r#type.as_deref()),
         AssetCmd::Show { name } => show(&name),
@@ -50,11 +50,27 @@ pub fn run(cmd: AssetCmd) {
     }
 }
 
-fn add(asset_type: &str, name: &str, image: Option<String>, prompt: Option<String>, keywords: Option<String>, threat: Option<String>) {
+fn download_image(url: &str, dest: &std::path::Path) -> Result<(), String> {
+    let response = ureq::get(url).call().map_err(|e| format!("다운로드 실패: {}", e))?;
+    let mut reader = response.into_body().into_reader();
+    let mut file = std::fs::File::create(dest).map_err(|e| format!("파일 생성 실패: {}", e))?;
+    std::io::copy(&mut reader, &mut file).map_err(|e| format!("저장 실패: {}", e))?;
+    Ok(())
+}
+
+fn ext_from_url(url: &str) -> String {
+    url.rsplit('.').next()
+        .and_then(|e| {
+            let e = e.split('?').next().unwrap_or(e).to_lowercase();
+            if ["png", "jpg", "jpeg", "webp", "gif"].contains(&e.as_str()) { Some(e) } else { None }
+        })
+        .unwrap_or_else(|| "png".to_string())
+}
+
+fn add(asset_type: &str, name: &str, image: Option<String>, url: Option<String>, prompt: Option<String>, keywords: Option<String>, threat: Option<String>) {
     let dir = current_project_dir();
     let type_dir = dir.join("assets").join(type_to_dir(asset_type));
 
-    // 이미지 파일 복사
     let stored_image = if let Some(ref img_path) = image {
         let src = PathBuf::from(img_path);
         if !src.exists() {
@@ -66,6 +82,19 @@ fn add(asset_type: &str, name: &str, image: Option<String>, prompt: Option<Strin
         let dest = type_dir.join(&dest_name);
         fs::copy(&src, &dest).unwrap();
         Some(dest_name)
+    } else if let Some(ref img_url) = url {
+        let ext = ext_from_url(img_url);
+        let dest_name = format!("{}.{}", name, ext);
+        let dest = type_dir.join(&dest_name);
+        print!("⬇️  다운로드 중... ");
+        match download_image(img_url, &dest) {
+            Ok(()) => {
+                let size = fs::metadata(&dest).map(|m| m.len()).unwrap_or(0);
+                println!("완료 ({} KB)", size / 1024);
+                Some(dest_name)
+            }
+            Err(e) => { eprintln!("실패: {}", e); None }
+        }
     } else {
         None
     };
