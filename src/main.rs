@@ -158,6 +158,17 @@ enum CutCmd {
         #[arg(long)]
         last_frame: Option<String>,
     },
+    /// 영상에서 프레임 추출 (ffmpeg)
+    Frame {
+        /// 영상 파일 경로
+        video: String,
+        /// 컷 번호 (프레임을 저장할 컷)
+        #[arg(long)]
+        cut: u32,
+        /// 추출 위치 (first/last, 기본: last)
+        #[arg(long, default_value = "last")]
+        pos: String,
+    },
     /// 컷별 에셋 연결
     Link {
         /// 컷 번호

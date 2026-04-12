@@ -51,6 +51,7 @@ pub fn run(cmd: CutCmd) {
         CutCmd::List => list(),
         CutCmd::Show { number } => show(number),
         CutCmd::Done { number, video, last_frame } => done(number, video, last_frame),
+        CutCmd::Frame { video, cut, pos } => frame(&video, cut, &pos),
         CutCmd::Link { number, asset } => link(number, &asset),
     }
 }
@@ -174,6 +175,76 @@ fn done(number: u32, video: Option<String>, last_frame: Option<String>) {
 
     // 연속 프레임 카운트 증가
     crate::project::increment_consecutive_frames();
+}
+
+fn frame(video_path: &str, cut_number: u32, pos: &str) {
+    let dir = current_project_dir();
+    let src = std::path::PathBuf::from(video_path);
+    if !src.exists() {
+        eprintln!("영상 파일을 찾을 수 없습니다: {}", video_path);
+        std::process::exit(1);
+    }
+
+    let frames_dir = dir.join("frames");
+    let output = frames_dir.join(format!("cut_{:03}_{}.png", cut_number, pos));
+
+    let ffmpeg_args = match pos {
+        "first" => {
+            // 첫 프레임
+            vec![
+                "-i", video_path,
+                "-vframes", "1",
+                "-y",
+                output.to_str().unwrap(),
+            ]
+        }
+        "last" => {
+            // 마지막 프레임: sseof로 끝에서 추출
+            vec![
+                "-sseof", "-0.1",
+                "-i", video_path,
+                "-vframes", "1",
+                "-y",
+                output.to_str().unwrap(),
+            ]
+        }
+        _ => {
+            eprintln!("pos는 first 또는 last만 가능합니다.");
+            std::process::exit(1);
+        }
+    };
+
+    let status = std::process::Command::new("ffmpeg")
+        .args(&ffmpeg_args)
+        .stderr(std::process::Stdio::null())
+        .status();
+
+    match status {
+        Ok(s) if s.success() => {
+            println!("✅ 프레임 추출: {}", output.display());
+
+            // 컷 메타에 프레임 경로 저장
+            let cut_path = dir.join("cuts").join(format!("cut_{:03}.json", cut_number));
+            if cut_path.exists() {
+                let mut meta: CutMeta = serde_json::from_str(&fs::read_to_string(&cut_path).unwrap()).unwrap();
+                let frame_name = format!("cut_{:03}_{}.png", cut_number, pos);
+                match pos {
+                    "first" => meta.start_frame = Some(frame_name),
+                    "last" => meta.last_frame = Some(frame_name),
+                    _ => {}
+                }
+                fs::write(&cut_path, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
+            }
+
+            if pos == "last" {
+                println!("   → 다음 컷의 Seedance 첫 프레임으로 사용 가능");
+            }
+        }
+        _ => {
+            eprintln!("ffmpeg 실행 실패. ffmpeg이 설치되어 있는지 확인하세요.");
+            std::process::exit(1);
+        }
+    }
 }
 
 fn link(number: u32, asset: &str) {
