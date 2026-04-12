@@ -121,3 +121,25 @@ Action Prompt (영문):
 - 길이: 15초
 - 크레딧: 약 255 / 컷
 - 옴니 레퍼런스: 사용 안 함
+
+## Higgsfield Start Frame 입력 방법
+
+Seedance 2.0은 이미지를 업로드한 뒤 프롬프트에서 `@` 멘션으로 역할을 지정한다. **자동 적용이 아니므로 반드시 프롬프트에 명시해야 한다.**
+
+### 입력 순서
+1. Higgsfield 대시보드 → AI Video → Seedance 2.0 선택
+2. Start Frame 이미지를 업로드 → `@Image1` 식별자 자동 부여
+3. 프롬프트 맨 앞에 `@Image1 as first frame.` 을 붙인 뒤 영상 프롬프트를 이어서 작성
+
+### 프롬프트 출력 형식
+영상 컷 프롬프트를 출력할 때, 사용자가 바로 복사해서 쓸 수 있도록 아래 형식을 따른다:
+
+```
+@Image1 as first frame. (영상 프롬프트 본문) ... No dialogue, No BGM.
+```
+
+### 참고사항
+- 이미지 최대 9장, 비디오 최대 3개(15초), 오디오 최대 3개 업로드 가능
+- Start Frame 이미지는 **2K~4K 고해상도 권장** — 흐린 입력 = 흐린 영상
+- First Frame + Last Frame 동시 지정 가능: `@Image1 as first frame`, `@Image2 as last frame`
+- 프리셋 사용 시, Start Frame을 프리셋 키프레임과 최대한 비슷하게 맞추면 일관성 향상
