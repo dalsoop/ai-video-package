@@ -48,14 +48,34 @@ Midjourney Prompt (영문):
 고정 외형 키워드: (이후 프롬프트에 재사용할 캐릭터/환경 키워드 정리)
 ```
 
+## 고정 스타일 접두사 (필수)
+
+프로젝트 시작 시 사용자가 제공한 캐릭터/레퍼런스 이미지의 질감을 분석해서 **고정 스타일 접두사**를 설정한다. 이후 해당 프로젝트의 **모든 미드저니 프롬프트 맨 앞에** 이 접두사를 삽입한다.
+
+**설정 방법:**
+1. 원본 이미지의 화풍을 파악한다 (애니메이션, 수채화, 극사실, 셀셰이딩 등)
+2. 그에 맞는 스타일 키워드 5~7개를 접두사로 고정한다
+3. 에셋 체크리스트 단계에서 사용자에게 보여주고 확인받는다
+
+**예시 — 애니메이션 일러스트 스타일:**
+> `Detailed but clean anime illustration, realistic anatomy, soft cel shading, warm muted color palette, hand-drawn linework, subtle texture grain`
+
+**예시 — 극사실 다크 판타지:**
+> `Hyper-realistic dark fantasy painting, dramatic chiaroscuro lighting, oil paint texture, desaturated earthy tones, photographic depth of field`
+
+**예시 — 수채화 동화풍:**
+> `Soft watercolor illustration, gentle pastel tones, loose brushstrokes, whimsical storybook atmosphere, delicate lineart, diffused natural light`
+
+접두사가 없으면 미드저니가 매번 다른 스타일로 뽑아서 **에셋 간 질감 일관성이 무너진다.** 반드시 설정한다.
+
 ## 프롬프트 구성 순서
 
-1. **캐릭터 외형** — 헤어, 눈, 표정
-2. **복장/장비** — 의상, 무기, 장갑, 부츠 등
-3. **포즈/동작** — 단 하나의 동작만 구체적으로
-4. **환경/배경** — 장소, 조명, 날씨, 시간대
-5. **카메라/구도** — 앵글, 거리, 초점
-6. **스타일 키워드** — anime style, cinematic, painterly 등
+1. **고정 스타일 접두사** — 프로젝트 공통 질감 키워드 (위 섹션 참조)
+2. **캐릭터 외형** — 헤어, 눈, 표정
+3. **복장/장비** — 의상, 무기, 장갑, 부츠 등
+4. **포즈/동작** — 단 하나의 동작만 구체적으로
+5. **환경/배경** — 장소, 조명, 날씨, 시간대
+6. **카메라/구도** — 앵글, 거리, 초점
 7. **파라미터** — --ar, --s, --v 7
 
 ## 용도별 가이드
