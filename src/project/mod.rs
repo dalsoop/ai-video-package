@@ -9,6 +9,12 @@ pub struct ProjectMeta {
     pub genre: String,
     pub project_type: String,
     pub phase: u8,
+    #[serde(default)]
+    pub style_prefix: String,
+    #[serde(default)]
+    pub consecutive_frames: u32,
+    #[serde(default)]
+    pub last_keycut_at: Option<u32>,
     pub created_at: String,
 }
 
@@ -40,6 +46,8 @@ pub fn run(cmd: ProjectCmd) {
             }
         }
         ProjectCmd::Use { name } => use_project(&name),
+        ProjectCmd::Phase { level } => set_phase(level),
+        ProjectCmd::Style { keywords } => set_style(keywords),
     }
 }
 
@@ -65,6 +73,9 @@ fn init(name: &str, genre: Option<String>, project_type: Option<String>, phase: 
         genre: genre.unwrap_or_else(|| "미정".to_string()),
         project_type: project_type.unwrap_or_else(|| "단편".to_string()),
         phase,
+        style_prefix: String::new(),
+        consecutive_frames: 0,
+        last_keycut_at: None,
         created_at: chrono::Local::now().format("%Y-%m-%d %H:%M").to_string(),
     };
 
@@ -190,6 +201,87 @@ fn show_status(name: &str) {
         })
         .unwrap_or(0);
     println!("🎬 컷: {}/{} 완성", done_cuts, total_cuts);
+    println!();
+
+    // 퀄리티 상태
+    println!("📊 퀄리티:");
+    if !meta.style_prefix.is_empty() {
+        println!("  스타일 접두사: {}", meta.style_prefix);
+    } else {
+        println!("  ⚠️  스타일 접두사 미설정 — `{} project style \"키워드\"` 로 설정하세요.", crate::BIN_NAME);
+    }
+    let frames = meta.consecutive_frames;
+    if frames >= 3 {
+        println!("  ⚠️  연속 프레임 연결: {}회 — 미드저니 키컷 재생성을 권고합니다!", frames);
+    } else {
+        println!("  ✅ 연속 프레임 연결: {}회", frames);
+    }
+    if let Some(at) = meta.last_keycut_at {
+        println!("  마지막 키컷: 컷 #{}", at);
+    }
+}
+
+fn current_project_meta() -> (PathBuf, ProjectMeta) {
+    let name = current_project_name().unwrap_or_else(|| {
+        eprintln!("현재 프로젝트가 없습니다.");
+        std::process::exit(1);
+    });
+    let dir = project_dir(&name);
+    let path = dir.join("project.json");
+    let meta: ProjectMeta = serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+    (path, meta)
+}
+
+fn set_phase(level: u8) {
+    if !(1..=4).contains(&level) {
+        eprintln!("Phase는 1~4 사이여야 합니다.");
+        std::process::exit(1);
+    }
+    let (path, mut meta) = current_project_meta();
+    let old = meta.phase;
+    meta.phase = level;
+    fs::write(&path, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
+    println!("✅ Phase 변경: {} → {}", old, level);
+    if level > old {
+        println!("   💡 Phase 전환 시 미드저니 키컷 재생성을 권고합니다.");
+    }
+}
+
+fn set_style(keywords: Option<String>) {
+    let (path, mut meta) = current_project_meta();
+    match keywords {
+        Some(kw) => {
+            meta.style_prefix = kw.clone();
+            fs::write(&path, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
+            println!("✅ 고정 스타일 접두사 설정: {}", kw);
+        }
+        None => {
+            if meta.style_prefix.is_empty() {
+                println!("⬜ 스타일 접두사가 설정되지 않았습니다.");
+                println!("  {} project style \"dark fantasy anime, cinematic lighting, ...\"", crate::BIN_NAME);
+            } else {
+                println!("🎨 현재 스타일 접두사: {}", meta.style_prefix);
+            }
+        }
+    }
+}
+
+/// 연속 프레임 카운트 증가 (cut done 시 호출)
+pub fn increment_consecutive_frames() {
+    let (path, mut meta) = current_project_meta();
+    meta.consecutive_frames += 1;
+    fs::write(&path, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
+    if meta.consecutive_frames >= 3 {
+        println!("⚠️  연속 프레임 연결 {}회 — 미드저니 키컷 재생성을 권고합니다!", meta.consecutive_frames);
+    }
+}
+
+/// 키컷 등록 시 연속 카운트 리셋
+pub fn reset_consecutive_frames(cut_number: u32) {
+    let (path, mut meta) = current_project_meta();
+    meta.consecutive_frames = 0;
+    meta.last_keycut_at = Some(cut_number);
+    fs::write(&path, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
 }
 
 pub fn status_current() {

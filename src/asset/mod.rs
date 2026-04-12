@@ -90,6 +90,12 @@ fn add(asset_type: &str, name: &str, image: Option<String>, prompt: Option<Strin
     if let Some(kw) = &meta.keywords {
         println!("   키워드: {}", kw);
     }
+
+    // 키컷 에셋 추가 시 연속 프레임 카운트 리셋
+    if asset_type == "keycut" {
+        crate::project::reset_consecutive_frames(0);
+        println!("   🔄 연속 프레임 카운트 리셋됨");
+    }
 }
 
 fn list(type_filter: Option<&str>) {

@@ -73,6 +73,16 @@ enum ProjectCmd {
         /// 프로젝트 이름
         name: String,
     },
+    /// Phase 변경
+    Phase {
+        /// Phase 번호 (1~4)
+        level: u8,
+    },
+    /// 고정 스타일 접두사 설정/확인
+    Style {
+        /// 스타일 키워드 (생략 시 현재 값 표시)
+        keywords: Option<String>,
+    },
 }
 
 // === ASSET ===

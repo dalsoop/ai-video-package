@@ -171,6 +171,9 @@ fn done(number: u32, video: Option<String>, last_frame: Option<String>) {
     let json = serde_json::to_string_pretty(&meta).unwrap();
     fs::write(&path, &json).unwrap();
     println!("✅ 컷 #{} 완성!", number);
+
+    // 연속 프레임 카운트 증가
+    crate::project::increment_consecutive_frames();
 }
 
 fn link(number: u32, asset: &str) {
