@@ -1,0 +1,130 @@
+{
+  "meta": {
+    "name": "영상 프롬프트 검증 규칙",
+    "version": "1.0.0"
+  },
+  "rules": [
+    {
+      "id": "seedance-no-dialogue",
+      "description": "Seedance 프롬프트에 No dialogue, No BGM 필수",
+      "severity": "error",
+      "match": {
+        "type": "required_keywords",
+        "keywords": ["No dialogue", "No BGM"],
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "block" },
+        { "type": "message", "text": "'No dialogue, No BGM' 필수. 없으면 캐릭터가 영어로 말하거나 음악이 겹칩니다." }
+      ]
+    },
+    {
+      "id": "seedance-consistency",
+      "description": "캐릭터 일관성 문구 필수",
+      "severity": "error",
+      "match": {
+        "type": "required_if",
+        "trigger_keywords": ["character", "girl", "boy", "man", "woman", "astronaut", "warrior", "soldier", "hero"],
+        "required_keywords": ["consistency", "consistent"],
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "block" },
+        { "type": "message", "text": "캐릭터 등장 시 'Maintain face and clothing consistency' 필수. 없으면 프레임마다 얼굴이 바뀝니다." }
+      ]
+    },
+    {
+      "id": "seedance-quality-suffix",
+      "description": "퀄리티 접미사 권장",
+      "severity": "warn",
+      "match": {
+        "type": "required_keywords",
+        "keywords": ["4K"],
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "warn" },
+        { "type": "message", "text": "퀄리티 접미사 권장: '4K, Ultra HD, Rich details, Sharp clarity, Cinematic texture, Stable picture'" }
+      ]
+    },
+    {
+      "id": "seedance-no-fast",
+      "description": "'fast' 키워드 금지 — Seedance가 불안정해짐",
+      "severity": "warn",
+      "match": {
+        "type": "list",
+        "keywords": ["fast motion", "fast movement", "fast speed", "moves fast", "runs fast", "fast action"],
+        "exceptions": ["fast forward"],
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "warn" },
+        { "type": "message", "text": "'fast' 대신 'smooth', 'swift', 'rapid', 'dynamic' 사용 권장. Seedance에서 'fast'는 불안정." }
+      ]
+    },
+    {
+      "id": "seedance-char-limit",
+      "description": "Seedance 3,000자 제한",
+      "severity": "error",
+      "match": {
+        "type": "char_limit",
+        "max": 3000,
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "block" },
+        { "type": "message", "text": "Seedance 프롬프트는 3,000자 이내. 초과 시 입력 자체가 안 됩니다." }
+      ]
+    },
+    {
+      "id": "korean-required",
+      "description": "한글 설명 필수",
+      "severity": "error",
+      "match": {
+        "type": "contains_korean",
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "block" },
+        { "type": "message", "text": "한글 설명이 없습니다. 한글 장면 설명 + 영문 프롬프트를 병행해야 합니다." }
+      ]
+    },
+    {
+      "id": "forbidden-static-scenes",
+      "description": "정적 장면 금지 — 액션 밀도 유지",
+      "severity": "warn",
+      "match": {
+        "type": "list",
+        "keywords": [
+          "standing still", "stands still", "motionless",
+          "posing in wind", "hair blowing in wind",
+          "watching sunset", "staring at sunset", "gazing at horizon",
+          "walking slowly", "walking away slowly",
+          "resting", "taking a break", "catching breath for",
+          "long pause", "moment of silence"
+        ],
+        "exceptions": [],
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "warn" },
+        { "type": "message", "text": "정적/느린 장면 감지. 액션 밀도 100% 유지 — 쉬는 구간, 폼잡기, 감성 여운 금지." }
+      ]
+    },
+    {
+      "id": "midjourney-white-bg",
+      "description": "미드저니 에셋 이미지 흰색 배경 필수",
+      "severity": "warn",
+      "match": {
+        "type": "required_if",
+        "trigger_keywords": ["character sheet", "monster", "creature", "weapon", "item"],
+        "required_keywords": ["white background", "blank background"],
+        "scope": "all"
+      },
+      "actions": [
+        { "type": "warn" },
+        { "type": "message", "text": "에셋 이미지에는 'white background' 권장." }
+      ]
+    }
+  ]
+}
