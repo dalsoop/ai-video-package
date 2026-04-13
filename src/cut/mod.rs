@@ -222,6 +222,26 @@ fn advance(number: u32, to: Option<String>) {
 
     let mut meta: CutMeta = serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
 
+    // === 하드 강제: 스타일 접두사 필수 ===
+    let project_meta_path = dir.join("project.json");
+    if let Ok(pjson) = fs::read_to_string(&project_meta_path) {
+        if let Ok(pmeta) = serde_json::from_str::<serde_json::Value>(&pjson) {
+            let prefix = pmeta["style_prefix"].as_str().unwrap_or("");
+            if prefix.is_empty() {
+                eprintln!("❌ 스타일 접두사가 설정되지 않았습니다. 파이프라인 진행 거부.");
+                eprintln!("   먼저 `{} project style \"키워드\"` 로 설정하세요.", crate::BIN_NAME);
+                std::process::exit(1);
+            }
+        }
+    }
+
+    // === 하드 강제: 에셋 연결 없이 진행 거부 ===
+    if meta.stage == CutStage::AssetReady && meta.linked_assets.is_empty() {
+        eprintln!("❌ 컷 #{}에 연결된 에셋이 없습니다. 파이프라인 진행 거부.", number);
+        eprintln!("   먼저 `{} cut link {} <에셋이름>` 으로 에셋을 연결하세요.", crate::BIN_NAME, number);
+        std::process::exit(1);
+    }
+
     let target = match to {
         Some(ref s) => stage_from_str(s),
         None => {
