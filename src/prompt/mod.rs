@@ -59,6 +59,19 @@ fn load_rules(prompt_type: &str) -> Option<RulesFile> {
 #[derive(Default)]
 struct ValidationResult { errors: Vec<String>, warnings: Vec<String> }
 
+fn word_boundary_match(haystack: &str, needle: &str) -> bool {
+    let needle_lower = needle.to_lowercase();
+    let hay_lower = haystack.to_lowercase();
+    if needle.contains(' ') { return hay_lower.contains(&needle_lower); }
+    for (i, _) in hay_lower.match_indices(&needle_lower) {
+        let before = if i == 0 { true } else { !hay_lower.as_bytes()[i - 1].is_ascii_alphanumeric() };
+        let after_pos = i + needle_lower.len();
+        let after = if after_pos >= hay_lower.len() { true } else { !hay_lower.as_bytes()[after_pos].is_ascii_alphanumeric() };
+        if before && after { return true; }
+    }
+    false
+}
+
 fn get_search_text(text: &str, scope: &str) -> String {
     if scope == "all" { text.to_lowercase() }
     else if let Some(name) = scope.strip_prefix("section:") {
@@ -83,7 +96,7 @@ fn validate(text: &str, prompt_type: &str) -> ValidationResult {
             MatchDef::List { keywords, exceptions, scope } => {
                 let search = get_search_text(text, scope);
                 let found: Vec<_> = keywords.iter()
-                    .filter(|kw| search.contains(&kw.to_lowercase()) && !exceptions.iter().any(|ex| search.contains(&ex.to_lowercase())))
+                    .filter(|kw| word_boundary_match(&search, &kw.to_lowercase()) && !exceptions.iter().any(|ex| word_boundary_match(&search, &ex.to_lowercase())))
                     .cloned().collect();
                 if !found.is_empty() {
                     let msg = format!("[{}] {} — 감지: [{}]", rule.id, collect_messages(&rule.actions), found.join(", "));
