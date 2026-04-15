@@ -105,7 +105,8 @@ fn validate(text: &str, prompt_type: &str) -> ValidationResult {
             }
             MatchDef::ContainsKorean { scope } => {
                 let search = get_search_text(text, scope);
-                if !search.chars().any(|c| ('\u{AC00}'..='\u{D7AF}').contains(&c)) {
+                // 한글이 감지되면 에러 (프롬프트는 순수 영문이어야 함)
+                if search.chars().any(|c| ('\u{AC00}'..='\u{D7AF}').contains(&c)) {
                     push(&mut result, &rule.severity, &format!("[{}] {}", rule.id, collect_messages(&rule.actions)));
                 }
             }
