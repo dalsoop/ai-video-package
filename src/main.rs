@@ -11,7 +11,7 @@ use clap::{Parser, Subcommand};
 /// 바이너리 이름 상수 — 변경 시 여기만 수정
 pub const BIN_NAME: &str = "avp";
 /// 프로젝트 데이터 디렉토리 이름
-pub const PROJECT_DIR: &str = ".avp";
+pub const PROJECT_DIR: &str = "avp";
 
 #[derive(Parser)]
 #[command(name = BIN_NAME)]
